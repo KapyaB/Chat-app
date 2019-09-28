@@ -19,6 +19,14 @@
       #container {
         display: none;
       }
+
+      .err {
+        color: red;
+      }
+
+      .whisper {
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
@@ -94,7 +102,11 @@
         msgForm.submit(function(e) {
           e.preventDefault();
           // send to server
-          socket.emit('send message', msgInput.val());
+          socket.emit('send message', msgInput.val(), function(data) {
+            chat.append(
+              '<span class="err">' + '<strong>' + data + '<span><br/>'
+            );
+          });
 
           // clear value
           msgInput.val('');
@@ -103,7 +115,24 @@
         // Receive message
         socket.on('new message', function(data) {
           chat.append(
-            '<strong>' + data.username + ':</strong>' + data.msg + '<br/>'
+            '<span class="msg">' +
+              '<strong>' +
+              data.username +
+              ':</strong>' +
+              data.msg +
+              '<span><br/>'
+          );
+        });
+
+        // private message
+        socket.on('whisper', function(data) {
+          chat.append(
+            '<span class="whisper">' +
+              '<strong>' +
+              data.username +
+              ':</strong>' +
+              data.msg +
+              '<span><br/>'
           );
         });
       });
