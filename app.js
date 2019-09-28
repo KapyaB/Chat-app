@@ -1,4 +1,10 @@
 const express = require('express');
+const connectDB = require('./helpers/db');
+
+const Chat = require('./models/Chats');
+
+// connect to mongoDB
+connectDB();
 
 const app = express();
 
@@ -17,9 +23,14 @@ app.get('/', async (req, res) => {
 var users = {};
 
 // fist thing to happen when a client connects
-io.on('connection', function(socket) {
+io.on('connection', async function(socket) {
   // socket-the socket that the user is using to connect
-  console.log('user connected');
+  // retrieve messages
+  // get last 8
+  const msgs = await Chat.find()
+    .sort({ created: -1 })
+    .limit(8);
+  socket.emit('load old messages', msgs);
 
   socket.on('new user', function(data, callback) {
     // callback because we are sending back data to the code that emitted the event
@@ -42,7 +53,6 @@ io.on('connection', function(socket) {
   }
 
   socket.on('disconnect', function() {
-    console.log('user disconnected');
     // check if user has name
     if (!socket.username) {
       return;
@@ -51,7 +61,7 @@ io.on('connection', function(socket) {
       updateUsernames();
     }
   });
-  socket.on('send message', function(data, callback) {
+  socket.on('send message', async function(data, callback) {
     // whisper (send private msg)
     var msg = data.trim();
     // a whisper msg begins with '/w ' 3 chars
@@ -77,6 +87,13 @@ io.on('connection', function(socket) {
         callback('Error, Please enter a message');
       }
     } else {
+      // save message
+      var newMsg = new Chat({ msg: data, name: socket.username });
+      await newMsg.save(function(err) {
+        if (err) {
+          throw err;
+        }
+      });
       // emit data to all users (self included)
       io.emit('new message', { msg: data, username: socket.username });
     }
