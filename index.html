@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Chat with socket.io and node js</title>
+    <style>
+      #chat-container {
+        height: 15rem;
+        width: 50%;
+        margin: auto;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    Chat app
+    <div id="chat-container"></div>
+    <form action="" id="msg-form">
+      <input type="text" id="msg-input" />
+      <input type="submit" class="submit-btn" value="Send" />
+    </form>
+
+    <!-- jquery -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+      crossorigin="anonymous"
+    ></script>
+    <!-- the socket io src is auto generated -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- js for messaging -->
+    <script>
+      $(function() {
+        // io comes from the above js script
+        var socket = io();
+        // variables
+        var msgForm = $('#msg-form');
+        var msgInput = $('#msg-input');
+        var chat = $('#chat-container');
+
+        // Events
+        msgForm.submit(function(e) {
+          e.preventDefault();
+          // send to server
+          socket.emit('send message', msgInput.val());
+
+          // clear value
+          msgInput.val('');
+        });
+
+        // Receive message
+        socket.on('new message', function(data) {
+          chat.append(data + '<br/>');
+        });
+      });
+    </script>
+  </body>
+</html>
