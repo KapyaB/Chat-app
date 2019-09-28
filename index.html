@@ -6,21 +6,40 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Chat with socket.io and node js</title>
     <style>
-      #chat-container {
+      #chat {
         height: 15rem;
         width: 50%;
         margin: auto;
+      }
+      #chat-container {
+        float: right;
         border: 1px solid #ccc;
+      }
+
+      #container {
+        display: none;
       }
     </style>
   </head>
   <body>
-    Chat app
-    <div id="chat-container"></div>
-    <form action="" id="msg-form">
-      <input type="text" id="msg-input" />
-      <input type="submit" class="submit-btn" value="Send" />
-    </form>
+    <div id="name-wrap">
+      <p>What's your name?</p>
+      <p id="error"></p>
+      <form action="" id="name-form">
+        <input type="text" size="35" id="username" />
+        <input type="submit" id="submit-btn" value="Submit" />
+      </form>
+    </div>
+    <div id="container">
+      <div id="chat-container">
+        <div id="chat"></div>
+        <form action="" id="msg-form">
+          <input type="text" id="msg-input" />
+          <input type="submit" class="submit-btn" value="Send" />
+        </form>
+      </div>
+      <div id="users"></div>
+    </div>
 
     <!-- jquery -->
     <script
@@ -39,9 +58,39 @@
         // variables
         var msgForm = $('#msg-form');
         var msgInput = $('#msg-input');
-        var chat = $('#chat-container');
+        var chat = $('#chat');
+        var nameForm = $('#name-form');
+        var nameBox = $('#username');
+        var error = $('#error');
+        var users = $('#users');
 
         // Events
+        // submit name
+        nameForm.submit(function(e) {
+          e.preventDefault();
+          socket.emit('new user', nameBox.val(), function(data) {
+            // data from callback on server (true or false in this case)
+            if (data) {
+              $('#name-wrap').hide();
+              $('#container').show();
+            } else {
+              error.html('Username already in use');
+            }
+          });
+
+          nameBox.val('');
+        });
+
+        // display usernames
+        socket.on('usernames', function(data) {
+          var html = '';
+          data.map(name => {
+            html = html + name + '<br/>';
+            return html;
+          });
+          users.html(html);
+        });
+
         msgForm.submit(function(e) {
           e.preventDefault();
           // send to server
@@ -53,7 +102,9 @@
 
         // Receive message
         socket.on('new message', function(data) {
-          chat.append(data + '<br/>');
+          chat.append(
+            '<strong>' + data.username + ':</strong>' + data.msg + '<br/>'
+          );
         });
       });
     </script>
