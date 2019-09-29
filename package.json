@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "server": "nodemon app",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Bright Kapya (kapyabright@outlook.com)",
   "license": "ISC",
@@ -14,7 +16,10 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "mongoose": "^5.7.1",
-    "nodemon": "^1.19.2",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.2",
+    "nodemon": "^1.19.3"
   }
 }

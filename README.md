@@ -2,7 +2,8 @@
 
 ## To-Do:
 1. #### Project Struture
-    - [ ] Move Chat route to appropriate route file
+    - [X] Move Chat route to appropriate route file. 
+        * Not really moved, just rendered unnecesary as socket controllers are in another file. ui will be in react
 
 1. #### Stack 
     - [ ] migrate to **React** front end (or ejs template as a chat popup)
