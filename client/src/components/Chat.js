@@ -3,23 +3,55 @@ import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { initSocket } from '../actions/chat';
+
+import { initSocket, openWidget, load1o1Chat } from '../actions/chat';
+import { loadUsers } from '../actions/auth';
+import ChatWidget from './chat/ChatWidget';
 
 const socketUrl = 'http://192.168.56.1:5000/'; // server url (here i used network ip it can as well be 'localhost:5000)
 
 const Chat = ({
   initSocket,
-  chat: { socket },
-  authState: { isAuthenticated, user }
+  chat: { socket, displayWidget },
+  authState: { isAuthenticated, user, users },
+  loadUsers,
+  openWidget,
+  load1o1Chat
 }) => {
   useEffect(() => {
-    isAuthenticated && initSocket(io, socketUrl, user._id);
+    loadUsers();
   }, []);
+
+  if (user && !socket) {
+    initSocket(io, socketUrl, user && user._id);
+  }
 
   if (!isAuthenticated) {
     return <Redirect to="/signin" />;
   }
-  return <div>Lets Chat!</div>;
+  return (
+    user && (
+      <div className="chat-page">
+        <div className="correspondents">
+          {users &&
+            users.map(corres => (
+              <span key={corres._id} className="correspondent-choice">
+                <button
+                  className="corres-btn"
+                  onClick={() => {
+                    openWidget(true);
+                    load1o1Chat(corres._id, corres, io, socketUrl);
+                  }}
+                >
+                  {corres.username}
+                </button>
+              </span>
+            ))}
+        </div>
+        {displayWidget && <ChatWidget socket={socket} />}
+      </div>
+    )
+  );
 };
 
 Chat.propTypes = {
@@ -33,5 +65,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { initSocket }
+  { initSocket, loadUsers, openWidget, load1o1Chat }
 )(Chat);

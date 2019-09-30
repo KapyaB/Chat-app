@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter, Link, Redirect } from 'react-router-dom';
 
-import { signUp, googleOAuth, facebookOAuth } from '../../actions/auth';
+import { signUp } from '../../actions/auth';
 import CustomInput from '../common/CustomInput';
 
 const Signup = ({

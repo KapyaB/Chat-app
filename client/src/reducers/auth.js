@@ -1,9 +1,17 @@
-import { SIGN_UP, SIGN_IN, SIGN_OUT, AUTH_ERROR } from '../actions/types';
+import {
+  SIGN_UP,
+  SIGN_IN,
+  SIGN_OUT,
+  AUTH_ERROR,
+  LOAD_USER,
+  LOAD_USERS
+} from '../actions/types';
 
 const initialState = {
-  isAuthenticated: false,
+  isAuthenticated: localStorage.jwtToken ? true : false,
   user: null,
-  token: null,
+  users: null,
+  token: localStorage.jwtToken || null,
   errorMsg: ''
 };
 
@@ -13,6 +21,21 @@ export default function(state = initialState, action) {
   switch (type) {
     default:
       return state;
+
+    case LOAD_USER:
+      return {
+        ...state,
+        user: payload,
+        isAuthenticated: true,
+        errorMsg: ''
+      };
+
+    case LOAD_USERS:
+      return {
+        ...state,
+        users: payload,
+        errorMsg: ''
+      };
 
     case SIGN_IN:
     case SIGN_UP:

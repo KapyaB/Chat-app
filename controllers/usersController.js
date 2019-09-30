@@ -29,7 +29,6 @@ module.exports = {
     try {
       const { username, email, password } = req.body;
 
-      console.log(req.body);
       // check if user already exists (email || username)
       let foundUser = await User.findOne({
         $or: [{ email }, { username }]
@@ -96,6 +95,38 @@ module.exports = {
       res.status(200).json({ token, user });
     } catch (error) {
       console.error(error.message);
+      res.status(500).send('Server Error');
+    }
+  },
+
+  // get user
+  getUser: async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id).select('-password');
+
+      // NO USER
+      if (!user) {
+        return res.status(400).json(genError('User does not exist'));
+      }
+      res.json(user);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  },
+
+  // load users
+  loadUsers: async (req, res, next) => {
+    try {
+      const users = await User.find().select('-password -email');
+
+      // NO USER
+      if (!users) {
+        return res.status(400).json(genError('No users'));
+      }
+      res.json(users.filter(user => user.id !== req.user.id));
+    } catch (err) {
+      console.error(err.message);
       res.status(500).send('Server Error');
     }
   }
