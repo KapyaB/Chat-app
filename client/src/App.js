@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import Chat from './components/Chat';
+import Navbar from './components/layout/Navbar';
 
-function App() {
+function App(props) {
   return (
     <div className="App">
-      <Chat />
+      <Navbar />
+      {props.children}
     </div>
   );
 }

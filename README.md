@@ -6,10 +6,10 @@
         * Not really moved, just rendered unnecesary as socket controllers are in another file. ui will be in react
 
 1. #### Stack 
-    - [ ] migrate to **React** front end (or ejs template as a chat popup)
+    - [x] migrate to **React** front end (or ejs template as a chat popup)
     
 1. #### Functionality
-    - [ ] Persist user data to db
+    - [X] Persist user data to db
     
     - [ ] Group Chat
     - [ ] Replace "whisper" functionality with "Reply privately" in new chat window

@@ -31,6 +31,7 @@ module.exports = async function(socket) {
 
   socket.on('disconnect', function() {
     // check if user has name
+    console.log('Socket disconnected');
     if (!socket.username) {
       return;
     } else {
