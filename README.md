@@ -10,7 +10,7 @@
     
 1. #### Functionality
     - [X] Persist user data to db
-    
+    - [ ] Private chat
     - [ ] Group Chat
     - [ ] Replace "whisper" functionality with "Reply privately" in new chat window
     - [ ] Emojis
