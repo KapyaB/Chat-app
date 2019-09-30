@@ -37,7 +37,3 @@ console.log(`Server running on port ${port}`);
 
 // Routes
 app.use('/api/users', require('./routes/users'));
-// app.use('/api/chats', require('./routes/chats'));
-app.get('/', async (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
