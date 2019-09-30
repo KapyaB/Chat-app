@@ -28,23 +28,21 @@ export const openWidget = status => dispatch => {
 };
 
 // load a 1 on 1 chat
-export const load1o1Chat = (
-  userId,
-  correspondent,
-  io,
-  socketUrl
-) => async dispatch => {
+export const load1o1Chat = (userId, correspondent, socket) => dispatch => {
   dispatch({
     type: SET_CORRESPONDENT,
     payload: correspondent
   });
-  const socket = io.connect(socketUrl, {
-    query: { user: userId, corres: correspondent._id }
+
+  socket.emit(LOAD_1O1_CHAT, {
+    user: userId,
+    corres: correspondent._id
   });
-  await socket.on(LOAD_1O1_CHAT, msgs => {
+
+  socket.on('LOAD_MSGS', msgs => {
     dispatch({
       type: LOAD_1O1_CHAT,
-      payload: msgs.reverse()
+      payload: msgs
     });
   });
 };

@@ -17,12 +17,24 @@ module.exports = async function(socket) {
 
     // retrieve 1on1 chat
     // get last 50
-    const privateMsgs = await Chat.find({
-      $and: [{ sender: query.user }, { recepient: query.corres }]
-    })
-      .sort({ created: -1 })
-      .limit(50);
-    socket.emit('LOAD_1O1_CHAT', privateMsgs);
+    socket.on('LOAD_1O1_CHAT', async (data, callback) => {
+      try {
+        const { user, corres } = data;
+        const sender = await User.findById(user);
+        const recep = await User.findById(corres);
+        if (sender && recep) {
+          const privateMsgs = await Chat.find({
+            $and: [{ sender: sender.id }, { recepient: recep.id }]
+          })
+            .sort({ created: -1 })
+            .limit(50);
+          // emit new messages
+          socket.emit('LOAD_MSGS', privateMsgs);
+        }
+      } catch (error) {
+        if (error) throw error;
+      }
+    });
 
     // send msg
     socket.on('SEND_MSG', async (data, callback) => {
@@ -31,19 +43,18 @@ module.exports = async function(socket) {
 
         // find recepient
         const recep = await User.findById(recepient._id);
-        console.log(recep);
         if (recep && msg !== '') {
           // save to database
           const newMsg = new Chat({
             sender: user.id,
-            recepient: recepient.id,
+            recepient: recep.id,
             msg
           });
 
           await newMsg.save();
 
           // recepient is online?
-          const recepientSocket = await Socket.find({
+          const recepientSocket = await ActiveSocket.find({
             'socket.user': recepient.id
           });
           if (recepientSocket) {

@@ -40,7 +40,7 @@ const Chat = ({
                   className="corres-btn"
                   onClick={() => {
                     openWidget(true);
-                    load1o1Chat(corres._id, corres, io, socketUrl);
+                    load1o1Chat(user._id, corres, socket);
                   }}
                 >
                   {corres.username}
