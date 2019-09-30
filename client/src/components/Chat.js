@@ -10,10 +10,10 @@ const socketUrl = 'http://192.168.56.1:5000/'; // server url (here i used networ
 const Chat = ({
   initSocket,
   chat: { socket },
-  authState: { isAuthenticated }
+  authState: { isAuthenticated, user }
 }) => {
   useEffect(() => {
-    isAuthenticated && initSocket(io, socketUrl);
+    isAuthenticated && initSocket(io, socketUrl, user._id);
   }, []);
 
   if (!isAuthenticated) {

@@ -1,10 +1,15 @@
 var app = require('../app.js');
 const Chat = require('../models/Chats');
+const User = require('../models/User');
 
 var users = {};
 module.exports = async function(socket) {
-  // socket-the socket that the user is using to connect // retrieve messages// get last 8
+  // socket-the socket that the user is using to connect
   const io = app.io;
+
+  const user = await User.findById(socket.handshake.query.user);
+
+  // retrieve messages// get last 8
   const msgs = await Chat.find()
     .sort({ created: -1 })
     .limit(8);
