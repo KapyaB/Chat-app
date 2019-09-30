@@ -10,6 +10,7 @@ export const AUTH_ERROR = 'AUTH_ERROR';
 export const SIGN_OUT = 'SIGN_OUT';
 
 // chat
+export const CONNECT = 'CONNECT';
 export const DISPLAY_WIDGET = 'DISPLAY_WIDGET';
 export const SET_CORRESPONDENT = 'SET_CORRESPONDENT';
 export const LOAD_1O1_CHAT = 'LOAD_1O1_CHAT';

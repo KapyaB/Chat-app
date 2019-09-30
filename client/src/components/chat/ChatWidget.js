@@ -17,6 +17,7 @@ const ChatWidget = ({
 
   const handleSubmit = e => {
     e.preventDefault();
+    setMsg({ msg: '' });
     sendMsg(correspondent, msg.msg, socket);
   };
 
@@ -25,7 +26,7 @@ const ChatWidget = ({
       <div className="widget-head">{correspondent.name}</div>
       <div className="chat-container">
         {privateMsgs.map(msg => (
-          <div className="msg-container">
+          <div key={msg._id} className="msg-container">
             <small className="msg-sender">
               {msg.sender.id === user._id ? 'You' : msg.sender.username}
             </small>

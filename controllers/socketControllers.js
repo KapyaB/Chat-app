@@ -2,33 +2,30 @@ var app = require('../app.js');
 const Chat = require('../models/Chats');
 const User = require('../models/User');
 const ActiveSocket = require('../models/ActiveSockets');
+const TestUser = require('../models/TestUsers');
 
 module.exports = async function(socket) {
   try {
     // socket-the socket that the user is using to connect
     const io = app.io;
     const query = socket.handshake.query;
-    // // persist to active sockets collection
-    // socket.user = query.user;
-    // const newSocket = new ActiveSocket({ socket });
-    // await newSocket.save();
-    // console.log(newSocket);
     const user = await User.findById(query.user);
+    // console.log('A new user has connected');
+    // const newUser = new ActiveSocket({ socket });
+    // await newUser.save();
 
     // retrieve 1on1 chat
     // get last 50
     socket.on('LOAD_1O1_CHAT', async (data, callback) => {
       try {
         const { user, corres } = data;
-        const sender = await User.findById(user);
-        const recep = await User.findById(corres);
-        if (sender && recep) {
+        if (user && corres) {
           const privateMsgs = await Chat.find({
-            $and: [{ sender: sender.id }, { recepient: recep.id }]
+            $and: [{ sender: user }, { recepient: corres }]
           })
             .sort({ created: -1 })
             .limit(50);
-          // emit new messages
+          // emit messages
           socket.emit('LOAD_MSGS', privateMsgs);
         }
       } catch (error) {
@@ -53,6 +50,13 @@ module.exports = async function(socket) {
 
           await newMsg.save();
 
+          const privateMsgs = await Chat.find({
+            $and: [{ sender: user.id }, { recepient: recep.id }]
+          });
+
+          // emit messages
+          socket.emit('LOAD_MSGS', privateMsgs);
+
           // recepient is online?
           const recepientSocket = await ActiveSocket.find({
             'socket.user': recepient.id
@@ -76,6 +80,7 @@ module.exports = async function(socket) {
       // socket.broadcast.emit('new message', data)
 
       socket.on('disconnect', function() {
+        console.log(socket.query);
         // check if user has name
         console.log('Socket disconnected');
         if (!socket.username) {

@@ -90,10 +90,11 @@ export const signIn = data => async dispatch => {
     });
     localStorage.setItem('jwtToken', res.data.token);
   } catch (err) {
-    dispatch({
-      type: AUTH_ERROR,
-      payload: err.response.statusText
-    });
+    console.log(err.response);
+    // dispatch({
+    //   type: AUTH_ERROR,
+    //   payload: err.response.statusText
+    // });
   }
 };
 

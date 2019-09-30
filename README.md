@@ -7,6 +7,7 @@
 
 1. #### Stack 
     - [x] migrate to **React** front end (or ejs template as a chat popup)
+    - keep track of active online users' sockets to emit private msgs
     
 1. #### Functionality
     - [X] Persist user data to db
